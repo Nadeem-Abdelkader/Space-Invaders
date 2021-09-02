@@ -8,6 +8,13 @@
       svg {
         background-color: rgb(41, 41, 36);
       }
+      div#controls {
+      float: right;
+      margin-top: 0;
+      margin-bottom: 0;
+      margin-left: 50;
+      margin-right: 700;
+  }
     </style>
     <script src="./dist/spaceinvaders.js"></script>
   </head>
@@ -22,6 +29,18 @@
         ></image>
       </g>
     </svg>
-
+    <div id="controls">
+      <h2>Controls:</h2>
+      <table>
+        <tr>
+          <td>Move Left</td>
+          <td><div id="ArrowLeft" class="key">&#8678;</div></td>
+        </tr>
+        <tr>
+          <td>Move Right</td>
+          <td><div id="ArrowRight" class="key">&#8680;</div></td>
+        </tr>
+      </table>
+    </div>
   </body>
 </html>
