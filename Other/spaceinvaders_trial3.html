@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <style>
+            @import url(style.css);
+            p.highlight {
+                color: red;
+            }
+            .ship {
+                fill: lightblue;
+            }
+            .hidden {
+                visibility:hidden;
+            }
+            .key {
+                width:18px;
+                text-align:center;
+                border-radius:3px;
+                background-color:lightgray;
+            }
+            .highlight {
+                background-color:pink;
+  }         
+  div#controls {
+      float: right;
+      margin: 50px;
+  }
+            svg {
+                background-color: rgb(41, 41, 36);
+            }
+        </style>
+        <script src="./dist/spaceinvaders.js"></script>
+    </head>
+    <body>
+        <h1>Space Invaders</h1>
+        <svg id="svgCanvas" width="600" height="600">
+            <g id="ship" transform="translate(100,100)">
+            <polygon id="thruster"/>
+            <polygon id="leftThrust"/>
+            <polygon id="rightThrust"/>
+            <image width="100" height="70" xlink:href="images/spaceship.png" />
+            </g>
+        </svg>
+            </body>
+            </html>
