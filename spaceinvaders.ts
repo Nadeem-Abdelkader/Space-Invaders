@@ -1,12 +1,5 @@
 import { fromEvent, interval, merge } from "rxjs";
-import {
-  map,
-  filter,
-  scan,
-  mergeMap,
-  takeUntil,
-  flatMap,
-} from "rxjs/operators";
+import { map, filter, scan, flatMap, takeUntil } from "rxjs/operators";
 
 function spaceinvaders() {
   // Inside this function you will use the classes and functions
