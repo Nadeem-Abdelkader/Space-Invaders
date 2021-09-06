@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <style>
+      .ship {
+        fill: lightblue;
+      }
+      .booster {
+        fill: orange;
+      }
+      .hidden {
+        visibility: hidden;
+      }
+      @import url(style.css);
+      p.highlight {
+        color: red;
+      }
+      svg {
+        background-color: rgb(41, 41, 36);
+      }
+    </style>
+    <script src="./dist/spaceinvaders.js"></script>
+  </head>
+  <body>
+    <h1>Space Invaders</h1>
+    <svg id="svgCanvas" width="600" height="600" style="background-color:black">
+  <g id="ship" transform="translate(100,100)">
+    <polygon class="booster hidden" id="thruster" points="-3,20 0,35 3,20">
+    </polygon>
+    <polygon class="booster hidden" id="leftThrust" points="2,-10 15,-12 2,-14">
+    </polygon>
+    <polygon class="booster hidden" id="rightThrust" points="-2,-10 -15,-12 -2,-14">
+    </polygon>
+    <polygon class="ship" points="-15,20 15,20 0,-20">
+    </polygon>
+  </g>
+</svg>
+  </body>
+</html>
