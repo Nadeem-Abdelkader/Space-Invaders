@@ -5,7 +5,7 @@
         fill: lightblue;
       }
       .booster {
-        fill: orange;
+        fill: rgb(41, 41, 36);
       }
       .hidden {
         visibility: hidden;
@@ -25,6 +25,10 @@
       p.highlight {
         color: red;
       }
+      div#controls {
+      float: right;
+      margin-right: 800;
+  }
       svg {
         background-color: rgb(41, 41, 36);
       }
@@ -145,5 +149,24 @@
         fill="rgb(70,255,0)"
       />
     </svg>
-  </body>
+    <div id="controls">
+      <h2>Controls:</h2>
+      <table>
+        <!-- <tr><td>Thrust</td><td>Up Arrow</td></tr> -->
+        <tr>
+          <td>Turn Left</td>
+          <td><div id="ArrowLeft" class="key">&#8678;</div></td>
+        </tr>
+        <tr>
+          <td>Turn Right</td>
+          <td><div id="ArrowRight" class="key">&#8680;</div></td>
+        </tr>
+        <tr>
+          <td>Fire</td>
+          <td><div id="Space" class="key" style="width: 50px">Space</div></td>
+        </tr>
+        <!-- <tr><td>Fire</td><td>Space</td>
+                <tr><td>Restart Game</td><td>F5</td></tr> -->
+      </table>
+    </div>
 </html>
