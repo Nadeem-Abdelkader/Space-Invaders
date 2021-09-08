@@ -1,3 +1,6 @@
+import { fromEvent, interval } from 'rxjs'; 
+import { map, filter, scan } from 'rxjs/operators';
+
 function spaceinvaders() {
     // Inside this function you will use the classes and functions 
     // from rx.js
