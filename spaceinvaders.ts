@@ -14,6 +14,9 @@ function spaceinvaders() {
   // as well as the functionality that you implement.
   // Document your code!
 
+    const score = parseInt(document.getElementById("score")!.innerHTML)
+    
+
   const Constants = {
     CanvasSize: 600,
     BulletExpirationTime: 1000,
@@ -75,6 +78,7 @@ function spaceinvaders() {
     exit: ReadonlyArray<Body>;
     objCount: number;
     gameOver: boolean;
+    win: boolean
   }>;
 
   const createCircle =
@@ -125,6 +129,7 @@ function spaceinvaders() {
       exit: [],
       objCount: Constants.StartAlienCount,
       gameOver: false,
+      win:false
     },
     torusWrap = ({ x, y }: Vec) => {
       const s = Constants.CanvasSize,
@@ -155,23 +160,25 @@ function spaceinvaders() {
           pos: r.pos,
           vel: r.vel.ortho().scale(dir),
         }),
-        spawnChildren = (r: Body) =>
-          r.radius >= Constants.StartAlienRadius / 4
-            ? [child(r, 1), child(r, -1)]
-            : [],
-        newAliens = flatMap(collidedAliens, spawnChildren).map((r, i) =>
-          createCircle("alien")(s.objCount + i)(s.time)(r.radius)(r.pos)(r.vel)
-        ),
+        // spawnChildren = (r: Body) =>
+        //   r.radius >= Constants.StartAlienRadius / 4
+        //     ? [child(r, 1), child(r, -1)]
+        //     : [],
+        // newAliens = flatMap(collidedAliens, spawnChildren).map((r, i) =>
+        //   createCircle("alien")(s.objCount + i)(s.time)(r.radius)(r.pos)(r.vel)
+        // ),
         cut = except((a: Body) => (b: Body) => a.id === b.id);
-
+  
       return <State>{
         ...s,
         bullets: cut(s.bullets)(collidedBullets),
-        aliens: cut(s.aliens)(collidedAliens).concat(newAliens),
+        aliens: cut(s.aliens)(collidedAliens),
         exit: s.exit.concat(collidedBullets, collidedAliens),
-        objCount: s.objCount + newAliens.length,
+        objCount: s.objCount,
         gameOver: shipCollided,
+        win: (Constants.StartAlienCount - s.aliens.length) == Constants.StartAlienCount,
       };
+    
     },
     tick = (s: State, elapsed: number) => {
       const expired = (b: Body) => elapsed - b.createTime > 230,
@@ -203,6 +210,7 @@ function spaceinvaders() {
             ...s,
             bullets: s.bullets.concat([
               ((unitVec: Vec) =>
+              
                 createCircle("bullet")(s.objCount)(s.time)(
                   Constants.BulletRadius
                 )(
@@ -229,6 +237,8 @@ function spaceinvaders() {
     .subscribe(updateView);
 
   function updateView(s: State) {
+    document.getElementById("score").innerHTML = String(Constants.StartAlienCount - s.aliens.length)  
+
     const svg = document.getElementById("svgCanvas")!,
       ship = document.getElementById("ship")!,
       show = (id: string, condition: boolean) =>
@@ -277,8 +287,22 @@ function spaceinvaders() {
       v.textContent = "Game Over";
       svg.appendChild(v);
     }
+
+    if (s.win) {
+      subscription.unsubscribe();
+      const v = document.createElementNS(svg.namespaceURI, "text")!;
+      attr(v, {
+        x: Constants.CanvasSize / 4   ,
+        y: Constants.CanvasSize / 2,
+        class: "win",
+      });
+      v.textContent = "You Win!";
+      svg.appendChild(v);
+    }
   }
-}
+  }
+  
+
 //window.onload = asteroids;
 setTimeout(spaceinvaders, 0);
 
