@@ -1,7 +1,7 @@
 import { fromEvent, interval, merge } from "rxjs";
 import { map, filter, scan } from "rxjs/operators";
 
-type Key = "ArrowLeft" | "ArrowRight" | "Space";
+type Key = "ArrowLeft" | "ArrowRight" | "Space" | "ArrowUp";
 type Event = "keydown" | "keyup";
 
 function spaceinvaders() {
@@ -14,8 +14,7 @@ function spaceinvaders() {
   // as well as the functionality that you implement.
   // Document your code!
 
-    const score = parseInt(document.getElementById("score")!.innerHTML)
-    
+  const score = parseInt(document.getElementById("score")!.innerHTML);
 
   const Constants = {
     CanvasSize: 600,
@@ -78,7 +77,7 @@ function spaceinvaders() {
     exit: ReadonlyArray<Body>;
     objCount: number;
     gameOver: boolean;
-    win: boolean
+    win: boolean;
   }>;
 
   const createCircle =
@@ -129,7 +128,7 @@ function spaceinvaders() {
       exit: [],
       objCount: Constants.StartAlienCount,
       gameOver: false,
-      win:false
+      win: false,
     },
     torusWrap = ({ x, y }: Vec) => {
       const s = Constants.CanvasSize,
@@ -168,7 +167,7 @@ function spaceinvaders() {
         //   createCircle("alien")(s.objCount + i)(s.time)(r.radius)(r.pos)(r.vel)
         // ),
         cut = except((a: Body) => (b: Body) => a.id === b.id);
-  
+
       return <State>{
         ...s,
         bullets: cut(s.bullets)(collidedBullets),
@@ -176,9 +175,10 @@ function spaceinvaders() {
         exit: s.exit.concat(collidedBullets, collidedAliens),
         objCount: s.objCount,
         gameOver: shipCollided,
-        win: (Constants.StartAlienCount - s.aliens.length) == Constants.StartAlienCount,
+        win:
+          Constants.StartAlienCount - s.aliens.length ==
+          Constants.StartAlienCount,
       };
-    
     },
     tick = (s: State, elapsed: number) => {
       const expired = (b: Body) => elapsed - b.createTime > 230,
@@ -210,7 +210,6 @@ function spaceinvaders() {
             ...s,
             bullets: s.bullets.concat([
               ((unitVec: Vec) =>
-              
                 createCircle("bullet")(s.objCount)(s.time)(
                   Constants.BulletRadius
                 )(
@@ -237,7 +236,9 @@ function spaceinvaders() {
     .subscribe(updateView);
 
   function updateView(s: State) {
-    document.getElementById("score").innerHTML = String(Constants.StartAlienCount - s.aliens.length)  
+    document.getElementById("score").innerHTML = String(
+      Constants.StartAlienCount - s.aliens.length
+    );
 
     const svg = document.getElementById("svgCanvas")!,
       ship = document.getElementById("ship")!,
@@ -292,7 +293,7 @@ function spaceinvaders() {
       subscription.unsubscribe();
       const v = document.createElementNS(svg.namespaceURI, "text")!;
       attr(v, {
-        x: Constants.CanvasSize / 4   ,
+        x: Constants.CanvasSize / 4,
         y: Constants.CanvasSize / 2,
         class: "win",
       });
@@ -300,8 +301,7 @@ function spaceinvaders() {
       svg.appendChild(v);
     }
   }
-  }
-  
+}
 
 //window.onload = asteroids;
 setTimeout(spaceinvaders, 0);
@@ -318,6 +318,7 @@ function showKeys() {
   }
   showKey("ArrowLeft");
   showKey("ArrowRight");
+  showKey("ArrowUp");
   showKey("Space");
 }
 
