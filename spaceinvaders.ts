@@ -119,7 +119,10 @@ function spaceinvaders() {
 
   const startAliens = [...Array(Constants.StartAlienCount)].map((_, i) =>
       createCircle("alien")(i)(Constants.StartTime)(Constants.StartAlienRadius)(
-        new Vec(Constants.CanvasSize / 2, Math.random() * (350 - 150) + 150)
+        new Vec(
+          Math.random() * (550 - 50) + 50,
+          Math.random() * (350 - 150) + 150
+        )
       )(new Vec(0.5 - Math.random(), 0.5 - Math.random()))
     ),
     initialState: State = {
