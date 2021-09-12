@@ -1,7 +1,11 @@
+// References
+// code: https://tgdwyer.github.io/asteroids/
+// image: http://pixelartmaker.com/art/e4af22756166f44
+
 import { fromEvent, interval, merge } from "rxjs";
 import { map, filter, scan } from "rxjs/operators";
 
-type Key = "ArrowLeft" | "ArrowRight" | "Space" | "ArrowUp";
+type Key = "ArrowLeft" | "ArrowRight" | "Space";
 type Event = "keydown" | "keyup";
 
 function spaceinvaders() {
@@ -13,8 +17,6 @@ function spaceinvaders() {
   // You will be marked on your functional programming style
   // as well as the functionality that you implement.
   // Document your code!
-
-  const score = parseInt(document.getElementById("score")!.innerHTML);
 
   const Constants = {
     CanvasSize: 600,
@@ -154,18 +156,6 @@ function spaceinvaders() {
         collidedBulletsAndAliens = allBulletsAndAliens.filter(bodiesCollided),
         collidedBullets = collidedBulletsAndAliens.map(([bullet, _]) => bullet),
         collidedAliens = collidedBulletsAndAliens.map(([_, alien]) => alien),
-        child = (r: Body, dir: number) => ({
-          radius: r.radius / 2,
-          pos: r.pos,
-          vel: r.vel.ortho().scale(dir),
-        }),
-        // spawnChildren = (r: Body) =>
-        //   r.radius >= Constants.StartAlienRadius / 4
-        //     ? [child(r, 1), child(r, -1)]
-        //     : [],
-        // newAliens = flatMap(collidedAliens, spawnChildren).map((r, i) =>
-        //   createCircle("alien")(s.objCount + i)(s.time)(r.radius)(r.pos)(r.vel)
-        // ),
         cut = except((a: Body) => (b: Body) => a.id === b.id);
 
       return <State>{
@@ -318,7 +308,6 @@ function showKeys() {
   }
   showKey("ArrowLeft");
   showKey("ArrowRight");
-  showKey("ArrowUp");
   showKey("Space");
 }
 
