@@ -1,7 +1,14 @@
-// References
-// code: https://tgdwyer.github.io/asteroids/
-// image: http://pixelartmaker.com/art/e4af22756166f44
+/*
 
+FIT2102 - Assignment 1
+
+Name: Nadeem Emadeldin Hamed Hamed Abdelkader
+Student ID: 30146224
+
+Image reference: http://pixelartmaker.com/art/e4af22756166f44
+Code reference: https://tgdwyer.github.io/asteroids/
+
+*/
 import { fromEvent, interval, merge } from "rxjs";
 import { map, filter, scan } from "rxjs/operators";
 
@@ -18,6 +25,7 @@ function spaceinvaders() {
   // as well as the functionality that you implement.
   // Document your code!
 
+  // Declaring constant variables to be used throughout the code
   const Constants = {
     CanvasSize: 600,
     BulletExpirationTime: 1000,
@@ -29,8 +37,10 @@ function spaceinvaders() {
     StartTime: 0,
   } as const;
 
+  // Our game has the following view element types:
   type ViewType = "ship" | "alien" | "bullet";
 
+  // Three types of game state transitions
   class Tick {
     constructor(public readonly elapsed: number) {}
   }
@@ -41,6 +51,7 @@ function spaceinvaders() {
     constructor() {}
   }
 
+  // Creating 5 observable streams (4 for moving and 1 for shooting bullets)
   const gameClock = interval(10).pipe(map((elapsed) => new Tick(elapsed))),
     keyObservable = <T>(e: Event, k: Key, result: () => T) =>
       fromEvent<KeyboardEvent>(document, e).pipe(
@@ -58,6 +69,7 @@ function spaceinvaders() {
     stopRightMove = keyObservable("keyup", "ArrowRight", () => new Move(0)),
     shoot = keyObservable("keydown", "Space", () => new Shoot());
 
+  // Every object that participates in physics is a Body
   type Body = Readonly<{
     id: string;
     viewType: ViewType;
@@ -71,6 +83,7 @@ function spaceinvaders() {
     createTime: number;
   }>;
 
+  // Game state
   type State = Readonly<{
     time: number;
     ship: Body;
@@ -82,6 +95,7 @@ function spaceinvaders() {
     win: boolean;
   }>;
 
+  // Aliens and bullets are both just circles, this function is used to create circles for aliens and bullets
   const createCircle =
     (viewType: ViewType) =>
     (oid: number) =>
@@ -102,6 +116,7 @@ function spaceinvaders() {
         viewType: viewType,
       };
 
+  // function for creating the spaceship
   function createShip(): Body {
     return {
       id: "ship",
@@ -117,6 +132,7 @@ function spaceinvaders() {
     };
   }
 
+  // Creating an array of aliens, and calling the createCircle function for each alien
   const startAliens = [...Array(Constants.StartAlienCount)].map((_, i) =>
       createCircle("alien")(i)(Constants.StartTime)(Constants.StartAlienRadius)(
         new Vec(
@@ -125,6 +141,7 @@ function spaceinvaders() {
         )
       )(new Vec(0.5 - Math.random(), 0.5 - Math.random()))
     ),
+    // Initial state of the game
     initialState: State = {
       time: 0,
       ship: createShip(),
@@ -135,11 +152,13 @@ function spaceinvaders() {
       gameOver: false,
       win: false,
     },
+    // Wrap a positions around edges of the screen
     torusWrap = ({ x, y }: Vec) => {
       const s = Constants.CanvasSize,
         wrap = (v: number) => (v < 0 ? v + s : v > s ? v - s : v);
       return new Vec(wrap(x), wrap(y));
     },
+    // All movement comes through here (ship, alien, or bullet)
     moveBody = (o: Body) =>
       <Body>{
         ...o,
@@ -148,6 +167,8 @@ function spaceinvaders() {
         pos: torusWrap(new Vec(o.pos.x + o.rotation, o.pos.y + o.vel.y)),
         vel: o.vel.add(o.acc),
       },
+    // Check a State for collisions:
+    // Bullets destroys aliens
     handleCollisions = (s: State) => {
       const bodiesCollided = ([a, b]: [Body, Body]) =>
           a.pos.sub(b.pos).len() < a.radius + b.radius,
@@ -173,6 +194,7 @@ function spaceinvaders() {
           Constants.StartAlienCount,
       };
     },
+    // interval tick: bodies move, bullets expire
     tick = (s: State, elapsed: number) => {
       const expired = (b: Body) => elapsed - b.createTime > 230,
         expiredBullets: Body[] = s.bullets.filter(expired),
@@ -195,6 +217,7 @@ function spaceinvaders() {
         time: elapsed,
       });
     },
+    // State transducer
     reduceState = (s: State, e: Move | Tick | Shoot) =>
       e instanceof Move
         ? { ...s, ship: { ...s.ship, torque: e.direction } }
@@ -217,6 +240,7 @@ function spaceinvaders() {
           }
         : tick(s, e.elapsed);
 
+  // main game stream
   const subscription = merge(
     gameClock,
     startLeftMove,
@@ -233,6 +257,8 @@ function spaceinvaders() {
       Constants.StartAlienCount - s.aliens.length
     );
 
+    // Update the svg scene.
+    // This is the only impure function in this program
     const svg = document.getElementById("svgCanvas")!,
       ship = document.getElementById("ship")!,
       show = (id: string, condition: boolean) =>
@@ -254,7 +280,6 @@ function spaceinvaders() {
     attr(ship, {
       transform: `translate(${s.ship.pos.x},${s.ship.pos.y})`,
     });
-    // REMOVE????
     show("leftThrust", s.ship.torque < 0);
     show("rightThrust", s.ship.torque > 0);
     show("thruster", s.ship.acc.len() > 0);
@@ -267,9 +292,14 @@ function spaceinvaders() {
         try {
           svg.removeChild(v);
         } catch (e) {
+          // rarely it can happen that a bullet can be in exit
+          // for both expiring and colliding in the same tick,
+          // which will cause this exception
           console.log("Already removed: " + v.id);
         }
       });
+    // If game ends unsubscribe and display "Game Over"
+    // Game should end when bullet hits spaceship, this doesn't take effect currently because alien bullets is not implemented
     if (s.gameOver) {
       subscription.unsubscribe();
       const v = document.createElementNS(svg.namespaceURI, "text")!;
@@ -281,7 +311,8 @@ function spaceinvaders() {
       v.textContent = "Game Over";
       svg.appendChild(v);
     }
-
+    // If user wins (hit alls aliens, in other words, score = num of start aliens)
+    // Unsubscribe and display "You Win" message
     if (s.win) {
       subscription.unsubscribe();
       const v = document.createElementNS(svg.namespaceURI, "text")!;
@@ -296,8 +327,11 @@ function spaceinvaders() {
   }
 }
 
-//window.onload = asteroids;
-setTimeout(spaceinvaders, 0);
+// the following simply runs your pong function on window load.  Make sure to leave it in place.
+if (typeof window != "undefined")
+  window.onload = () => {
+    spaceinvaders();
+  };
 
 function showKeys() {
   function showKey(k: Key) {
